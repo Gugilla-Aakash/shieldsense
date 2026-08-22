@@ -3,7 +3,7 @@ import Hero from "../components/landing/Hero";
 import ProblemSection from "../components/landing/ProblemSection";
 import HowItWorks from "../components/landing/HowItWorks";
 import SecurityCapabilities from "../components/landing/SecurityCapabilities";
-// import FinalCTA from '../components/landing/FinalCTA';
+import FinalCTA from "../components/landing/FinalCTA";
 // import Footer from '../components/landing/Footer';
 
 export default function LandingPage() {
@@ -22,13 +22,11 @@ export default function LandingPage() {
         {/* 5. HOW IT WORKS */}
         <HowItWorks />
 
-        {/* 6. CAPABILITIES: Links / Emails / Files / Messages */}
+        {/* 6. CAPABILITIES */}
         <SecurityCapabilities />
 
         {/* 7. CTA: "Ready to investigate?" */}
-        <section className="bg-gradient-to-b from-transparent to-[var(--bg-tertiary)] py-24 text-center text-[var(--text-muted)]">
-          [ FINAL CTA ]
-        </section>
+        <FinalCTA />
       </main>
 
       {/* 8. FOOTER */}
