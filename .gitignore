@@ -47,6 +47,7 @@ Thumbs.db
 .venv
 __pycache__
 *.db
+backend/shieldsense.db
 *.sqlite
 *.sqlite3
 __pycache__/
