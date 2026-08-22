@@ -2,7 +2,7 @@ import Navbar from "../components/landing/Navbar";
 import Hero from "../components/landing/Hero";
 import ProblemSection from "../components/landing/ProblemSection";
 import HowItWorks from "../components/landing/HowItWorks";
-// import SecurityCapabilities from '../components/landing/SecurityCapabilities';
+import SecurityCapabilities from "../components/landing/SecurityCapabilities";
 // import FinalCTA from '../components/landing/FinalCTA';
 // import Footer from '../components/landing/Footer';
 
@@ -13,19 +13,17 @@ export default function LandingPage() {
       <Navbar />
 
       <main className="flex flex-1 flex-col">
-        {/* 2. HERO: "Something suspicious just arrived." */}
+        {/* 2. HERO */}
         <Hero />
 
-        {/* 4. PROBLEM: "Why can't normal security catch this?" */}
+        {/* 4. PROBLEM */}
         <ProblemSection />
 
-        {/* 5. HOW IT WORKS: Detect → Investigate → Explain → Protect */}
+        {/* 5. HOW IT WORKS */}
         <HowItWorks />
 
         {/* 6. CAPABILITIES: Links / Emails / Files / Messages */}
-        <section className="py-24 text-center text-[var(--text-muted)]">
-          [ SECURITY CAPABILITIES ]
-        </section>
+        <SecurityCapabilities />
 
         {/* 7. CTA: "Ready to investigate?" */}
         <section className="bg-gradient-to-b from-transparent to-[var(--bg-tertiary)] py-24 text-center text-[var(--text-muted)]">
