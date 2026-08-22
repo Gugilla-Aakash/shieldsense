@@ -46,3 +46,8 @@ Thumbs.db
 
 .venv
 __pycache__
+*.db
+*.sqlite
+*.sqlite3
+__pycache__/
+.env.local
