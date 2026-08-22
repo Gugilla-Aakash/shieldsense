@@ -6,9 +6,10 @@ import { Activity, ArrowUpRight, Menu, Shield, X, Zap } from "lucide-react";
 import { motion, useMotionValueEvent, useScroll } from "framer-motion";
 
 const navItems = [
-  { href: "#product", label: "Product" },
-  { href: "#how-it-works", label: "How It Works" },
-  { href: "#security", label: "Security" },
+  { href: "/scanner", label: "Scanner" },
+  { href: "/#how-it-works", label: "How It Works" },
+  { href: "/#security", label: "Security" },
+  { href: "/dashboard", label: "Dashboard" },
 ];
 
 export default function Navbar() {
@@ -23,7 +24,6 @@ export default function Navbar() {
 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
-
     return () => {
       document.body.style.overflow = "";
     };
@@ -58,7 +58,6 @@ export default function Navbar() {
             }}
             className="absolute left-1/2 top-0 h-px w-[70%] -translate-x-1/2 bg-gradient-to-r from-transparent via-violet-400/80 to-transparent blur-[1px]"
           />
-
           <div className="absolute left-1/2 top-0 h-24 w-[45%] -translate-x-1/2 rounded-full bg-violet-600/[0.07] blur-3xl" />
         </div>
 
@@ -102,9 +101,7 @@ export default function Navbar() {
               scrolled ? "h-[64px]" : "h-[78px]"
             }`}
           >
-            {/* =====================================================
-                BRAND
-            ===================================================== */}
+            {/* BRAND */}
             <Link
               href="/"
               onClick={closeMobile}
@@ -164,16 +161,13 @@ export default function Navbar() {
                 <span className="text-[13px] font-bold tracking-[0.24em] text-white transition-colors duration-200 group-hover:text-violet-200">
                   SHIELDSENSE
                 </span>
-
                 <span className="mt-0.5 hidden text-[7px] font-medium tracking-[0.24em] text-white/25 sm:block">
                   THREAT INTELLIGENCE SYSTEM
                 </span>
               </div>
             </Link>
 
-            {/* =====================================================
-                CENTER NAV
-            ===================================================== */}
+            {/* CENTER NAV */}
             <nav className="absolute left-1/2 hidden -translate-x-1/2 lg:flex">
               <div className="flex items-center rounded-full border border-white/[0.055] bg-white/[0.02] p-1">
                 {navItems.map((item) => (
@@ -186,9 +180,7 @@ export default function Navbar() {
               </div>
             </nav>
 
-            {/* =====================================================
-                RIGHT SIDE
-            ===================================================== */}
+            {/* RIGHT SIDE */}
             <div className="relative z-10 flex items-center gap-2 sm:gap-4">
               {/* Network */}
               <div className="hidden items-center gap-2 xl:flex">
@@ -196,7 +188,6 @@ export default function Navbar() {
                   <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400/30" />
                   <span className="relative h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_9px_rgba(52,211,153,0.8)]" />
                 </span>
-
                 <div className="flex flex-col">
                   <span className="font-mono text-[7px] tracking-[0.15em] text-white/30">
                     NODE_07
@@ -210,27 +201,24 @@ export default function Navbar() {
               {/* System status */}
               <div className="hidden items-center gap-2.5 rounded-full border border-emerald-400/10 bg-emerald-400/[0.035] px-3 py-2 sm:flex">
                 <Zap className="h-3 w-3 text-emerald-300/80" />
-
                 <span className="text-[8px] font-bold uppercase tracking-[0.16em] text-emerald-300/70">
                   System Ready
                 </span>
               </div>
 
-              {/* CTA */}
-              <motion.button
-                whileHover={{
-                  y: -1,
-                  scale: 1.02,
-                }}
-                whileTap={{ scale: 0.98 }}
-                className="group hidden h-10 items-center gap-2 rounded-full border border-violet-400/30 bg-violet-500/[0.09] px-4 text-[9px] font-bold uppercase tracking-[0.16em] text-violet-200 transition-all duration-300 hover:border-violet-300/60 hover:bg-violet-500/[0.16] hover:text-white hover:shadow-[0_0_35px_rgba(139,92,246,0.2)] md:inline-flex"
-              >
-                <span>Scan Now</span>
+              {/* CTA Desktop */}
+              <Link href="/#scanner" passHref>
+                <motion.button
+                  whileHover={{ y: -1, scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="group hidden h-10 items-center gap-2 rounded-full border border-violet-400/30 bg-violet-500/[0.09] px-4 text-[9px] font-bold uppercase tracking-[0.16em] text-violet-200 transition-all duration-300 hover:border-violet-300/60 hover:bg-violet-500/[0.16] hover:text-white hover:shadow-[0_0_35px_rgba(139,92,246,0.2)] md:inline-flex"
+                >
+                  <span>Scan Now</span>
+                  <ArrowUpRight className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </motion.button>
+              </Link>
 
-                <ArrowUpRight className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </motion.button>
-
-              {/* Mobile */}
+              {/* Mobile Menu Toggle */}
               <button
                 type="button"
                 aria-label={
@@ -241,9 +229,7 @@ export default function Navbar() {
                 className="flex h-10 w-10 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.025] text-white/55 transition-all duration-300 hover:border-violet-400/30 hover:bg-violet-500/[0.06] hover:text-white lg:hidden"
               >
                 <motion.div
-                  animate={{
-                    rotate: mobileOpen ? 90 : 0,
-                  }}
+                  animate={{ rotate: mobileOpen ? 90 : 0 }}
                   transition={{ duration: 0.2 }}
                 >
                   {mobileOpen ? (
@@ -256,9 +242,7 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* =====================================================
-              TELEMETRY STRIP
-          ===================================================== */}
+          {/* TELEMETRY STRIP */}
           <div className="hidden border-t border-white/[0.035] lg:block">
             <div className="mx-auto flex h-5 max-w-[1440px] items-center justify-between px-[clamp(1.25rem,3vw,4rem)]">
               <div className="flex items-center gap-4 text-[6px] font-medium tracking-[0.22em] text-white/15">
@@ -268,7 +252,6 @@ export default function Navbar() {
                 <span className="text-violet-400/30">/</span>
                 <span>THREAT MONITORING ONLINE</span>
               </div>
-
               <div className="flex items-center gap-2 font-mono text-[6px] tracking-[0.2em] text-violet-400/30">
                 <Activity className="h-2.5 w-2.5" />
                 <span>SHIELDSENSE // SECURE_LINK</span>
@@ -277,28 +260,15 @@ export default function Navbar() {
           </div>
         </motion.div>
 
-        {/* =======================================================
-            MOBILE MENU
-        ======================================================= */}
+        {/* MOBILE MENU */}
         <motion.div
           initial={false}
           animate={
             mobileOpen
-              ? {
-                  opacity: 1,
-                  height: "auto",
-                  pointerEvents: "auto",
-                }
-              : {
-                  opacity: 0,
-                  height: 0,
-                  pointerEvents: "none",
-                }
+              ? { opacity: 1, height: "auto", pointerEvents: "auto" }
+              : { opacity: 0, height: 0, pointerEvents: "none" }
           }
-          transition={{
-            duration: 0.35,
-            ease: [0.22, 1, 0.36, 1],
-          }}
+          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
           className="overflow-hidden border-b border-white/[0.06] bg-[#050507]/95 backdrop-blur-2xl lg:hidden"
         >
           <div className="mx-auto max-w-[1440px] px-[clamp(1.25rem,3vw,4rem)] py-5">
@@ -328,10 +298,12 @@ export default function Navbar() {
             </div>
 
             <div className="mt-4 border-t border-white/[0.05] pt-4">
-              <button className="flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-violet-400/25 bg-violet-500/[0.08] text-[9px] font-bold uppercase tracking-[0.16em] text-violet-200 transition-all hover:border-violet-300/50 hover:bg-violet-500/[0.14]">
-                Scan Now
-                <ArrowUpRight className="h-3.5 w-3.5" />
-              </button>
+              <Link href="/#scanner" onClick={closeMobile} passHref>
+                <button className="flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-violet-400/25 bg-violet-500/[0.08] text-[9px] font-bold uppercase tracking-[0.16em] text-violet-200 transition-all hover:border-violet-300/50 hover:bg-violet-500/[0.14]">
+                  Scan Now
+                  <ArrowUpRight className="h-3.5 w-3.5" />
+                </button>
+              </Link>
             </div>
 
             <div className="mt-4 flex items-center justify-between text-[6px] font-mono tracking-[0.16em] text-white/15">
@@ -352,14 +324,12 @@ function NavItem({ href, label }: { href: string; label: string }) {
       className="group relative rounded-full px-4 py-2.5 text-[9px] font-medium tracking-[0.13em] text-white/35 transition-all duration-200 hover:bg-white/[0.04] hover:text-white"
     >
       <span className="relative z-10">{label}</span>
-
       {/* Hover glow */}
       <motion.span
         initial={{ opacity: 0 }}
         whileHover={{ opacity: 1 }}
         className="absolute inset-x-3 bottom-1 h-px bg-gradient-to-r from-transparent via-violet-400/80 to-transparent"
       />
-
       {/* Corner signal */}
       <span className="absolute right-1.5 top-1.5 h-1 w-1 border-r border-t border-violet-400/0 transition-colors duration-300 group-hover:border-violet-400/70" />
     </Link>
