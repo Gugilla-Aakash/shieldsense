@@ -1,22 +1,17 @@
-// frontend/app/page.tsx
-
-// We will uncomment these as we build them component by component:
-// import Navbar from '@/components/landing/Navbar';
-// import Hero from '@/components/landing/Hero';
-// import ThreatDemo from '@/components/landing/ThreatDemo';
-// import ProblemSection from '@/components/landing/ProblemSection';
-// import HowItWorks from '@/components/landing/HowItWorks';
-// import SecurityCapabilities from '@/components/landing/SecurityCapabilities';
-// import FinalCTA from '@/components/landing/FinalCTA';
-// import Footer from '@/components/landing/Footer';
+import Navbar from "../components/landing/Navbar";
+// import Hero from '../components/landing/Hero';
+// import ThreatDemo from '../components/landing/ThreatDemo';
+// import ProblemSection from '../components/landing/ProblemSection';
+// import HowItWorks from '../components/landing/HowItWorks';
+// import SecurityCapabilities from '../components/landing/SecurityCapabilities';
+// import FinalCTA from '../components/landing/FinalCTA';
+// import Footer from '../components/landing/Footer';
 
 export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* 1. NAVIGATION */}
-      <header className="py-4 border-b border-[var(--border-subtle)] text-center text-sm font-semibold tracking-widest text-[var(--text-muted)]">
-        [ NAVBAR ]
-      </header>
+      <Navbar />
 
       <main className="flex-1 flex flex-col">
         {/* 2. HERO: "Something suspicious just arrived." */}
