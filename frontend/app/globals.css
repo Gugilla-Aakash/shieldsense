@@ -1,95 +1,188 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@config "../tailwind.config.js";
 
 :root {
-  /* --- 1. Global Background & Surface Hierarchy --- */
-  --bg-base: #06060a;
-  --bg-primary: #090910;
-  --bg-secondary: #0e0e1a;
-  --bg-tertiary: #141426;
+  /* =========================================================
+     SHIELDSENSE — GLOBAL DESIGN SYSTEM
+     ========================================================= */
 
-  /* Surfaces & Glass */
-  --surface: #0d0d17;
-  --surface-elevated: #151524;
-  --surface-glass: rgba(14, 14, 26, 0.7);
-  --surface-glass-card: rgba(20, 20, 38, 0.45);
+  /* Backgrounds */
+  --bg-base: #050507;
+  --bg-primary: #08080d;
+  --bg-secondary: #0c0c14;
+  --bg-tertiary: #12121d;
 
-  /* --- 2. Border Language --- */
-  --border-subtle: rgba(255, 255, 255, 0.07);
-  --border-glass: rgba(255, 255, 255, 0.12);
-  --border-purple: rgba(147, 51, 234, 0.25);
-  --border-purple-bright: rgba(168, 85, 247, 0.45);
+  /* Surfaces */
+  --surface: #0b0b11;
+  --surface-elevated: #11111a;
+  --surface-glass: rgba(15, 15, 24, 0.68);
+  --surface-glass-card: rgba(18, 18, 30, 0.48);
 
-  /* --- 3. Purple Brand Accent Palette --- */
+  /* Borders */
+  --border-subtle: rgba(255, 255, 255, 0.065);
+  --border-glass: rgba(255, 255, 255, 0.11);
+  --border-purple: rgba(147, 51, 234, 0.24);
+  --border-purple-bright: rgba(168, 85, 247, 0.46);
+
+  /* Brand */
   --purple-primary: #8b5cf6;
   --purple-bright: #a855f7;
   --purple-light: #c084fc;
   --purple-deep: #581c87;
-  --purple-glow: rgba(168, 85, 247, 0.18);
-  --purple-glow-strong: rgba(168, 85, 247, 0.35);
+  --purple-glow: rgba(168, 85, 247, 0.16);
+  --purple-glow-strong: rgba(168, 85, 247, 0.3);
 
-  /* --- 4. Product Security States (SAFE / SUSPICIOUS / DANGEROUS) --- */
+  /* Security states */
   --color-safe: #10b981;
-  --color-safe-bg: rgba(16, 185, 129, 0.08);
-  --color-safe-border: rgba(16, 185, 129, 0.25);
-  --color-safe-glow: rgba(16, 185, 129, 0.2);
+  --color-safe-bg: rgba(16, 185, 129, 0.07);
+  --color-safe-border: rgba(16, 185, 129, 0.22);
+  --color-safe-glow: rgba(16, 185, 129, 0.18);
 
   --color-suspicious: #f59e0b;
-  --color-suspicious-bg: rgba(245, 158, 11, 0.08);
-  --color-suspicious-border: rgba(245, 158, 11, 0.25);
-  --color-suspicious-glow: rgba(245, 158, 11, 0.2);
+  --color-suspicious-bg: rgba(245, 158, 11, 0.07);
+  --color-suspicious-border: rgba(245, 158, 11, 0.22);
+  --color-suspicious-glow: rgba(245, 158, 11, 0.18);
 
   --color-danger: #ef4444;
-  --color-danger-bg: rgba(239, 68, 68, 0.08);
-  --color-danger-border: rgba(239, 68, 68, 0.25);
-  --color-danger-glow: rgba(239, 68, 68, 0.25);
+  --color-danger-bg: rgba(239, 68, 68, 0.07);
+  --color-danger-border: rgba(239, 68, 68, 0.22);
+  --color-danger-glow: rgba(239, 68, 68, 0.22);
 
-  /* --- 5. Text Hierarchy --- */
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  /* Typography */
+  --text-primary: #f5f5f7;
+  --text-secondary: #a1a1af;
+  --text-muted: #6d6d7c;
   --text-inverse: #030308;
+
+  /* Layout */
+  --content-max: 1440px;
+  --content-padding: clamp(1.25rem, 3vw, 4rem);
+
+  /* Vertical rhythm */
+  --section-space: clamp(6rem, 10vw, 10rem);
+  --section-space-large: clamp(8rem, 14vw, 13rem);
 }
 
-/* --- 6. Global Reset & Browser Behavior --- */
+/* =========================================================
+   GLOBAL RESET
+   ========================================================= */
+
 *,
 *::before,
 *::after {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
 html {
   color-scheme: dark;
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
-  background-color: var(--bg-base);
+  background: var(--bg-base);
 }
 
 body {
   min-height: 100vh;
-  background-color: var(--bg-base);
+  margin: 0;
+  background:
+    radial-gradient(
+      circle at 50% -10%,
+      rgba(139, 92, 246, 0.045),
+      transparent 32%
+    ),
+    var(--bg-base);
   color: var(--text-primary);
-  font-family: var(
-    --font-sans,
+
+  font-family:
+    var(--font-sans),
     system-ui,
     -apple-system,
     BlinkMacSystemFont,
     "Segoe UI",
     Roboto,
-    sans-serif
-  );
+    sans-serif;
+
+  line-height: 1.6;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
   overflow-x: hidden;
 }
 
-/* --- 7. Selection & Scrollbar Polish --- */
+/* =========================================================
+   TYPOGRAPHY
+   ========================================================= */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  color: var(--text-primary);
+  text-wrap: balance;
+}
+
+h1 {
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+}
+
+h2 {
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+}
+
+h3 {
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+}
+
+h4,
+h5,
+h6 {
+  line-height: 1.25;
+}
+
+p {
+  margin: 0;
+  line-height: 1.75;
+  text-wrap: pretty;
+}
+
+button,
+a,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* Prevent accidental cramped text in technical labels */
+.shield-badge-tag,
+[class*="tracking-widest"],
+[class*="tracking-[0.16em]"],
+[class*="tracking-[0.18em]"],
+[class*="tracking-[0.2em]"],
+[class*="tracking-[0.22em]"],
+[class*="tracking-[0.24em]"],
+[class*="tracking-[0.25em]"],
+[class*="tracking-[0.28em]"],
+[class*="tracking-[0.3em]"] {
+  line-height: 1.5;
+}
+
+/* =========================================================
+   SELECTION / SCROLLBAR
+   ========================================================= */
+
 ::selection {
-  background-color: rgba(168, 85, 247, 0.35);
+  background: rgba(168, 85, 247, 0.32);
   color: #ffffff;
 }
 
@@ -103,95 +196,220 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1e1e32;
-  border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: #1b1b29;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #2a2a46;
+  background: #29293d;
 }
 
-/* --- 8. Reusable Layout Utilities --- */
+/* =========================================================
+   LAYOUT SYSTEM
+   ========================================================= */
+
 @layer components {
-  /* Centralized container structure */
+  /*
+   * Main page container.
+   * Wider than the old 1240px limit so the interface
+   * doesn't feel squeezed on desktop screens.
+   */
   .shield-container {
     width: 100%;
-    max-width: 1240px;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 1.25rem;
-    padding-right: 1.25rem;
+    max-width: var(--content-max);
+    margin-inline: auto;
+    padding-inline: var(--content-padding);
   }
 
-  @media (min-width: 640px) {
-    .shield-container {
-      padding-left: 2rem;
-      padding-right: 2rem;
-    }
+  /*
+   * Standard section.
+   * Gives every major landing-page section breathing room.
+   */
+  .shield-section {
+    position: relative;
+    width: 100%;
+    padding-block: var(--section-space);
+  }
+
+  .shield-section-large {
+    position: relative;
+    width: 100%;
+    padding-block: var(--section-space-large);
+  }
+
+  /*
+   * Flexible content column.
+   * Useful for readable text blocks without forcing
+   * everything into tiny widths.
+   */
+  .shield-content {
+    width: 100%;
+    max-width: 760px;
+  }
+
+  .shield-content-narrow {
+    width: 100%;
+    max-width: 640px;
+  }
+
+  /*
+   * Major section heading spacing.
+   */
+  .shield-section-header {
+    margin-bottom: clamp(3rem, 6vw, 5rem);
+  }
+
+  /*
+   * Reliable two-column system.
+   */
+  .shield-grid-2 {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(3rem, 7vw, 8rem);
+    align-items: center;
   }
 
   @media (min-width: 1024px) {
-    .shield-container {
-      padding-left: 2.5rem;
-      padding-right: 2.5rem;
+    .shield-grid-2 {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
     }
   }
 
-  /* Glass and surface containers */
+  /*
+   * Three-column system.
+   */
+  .shield-grid-3 {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .shield-grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 2rem;
+    }
+  }
+
+  /* =======================================================
+     SURFACES
+     ======================================================= */
+
   .shield-surface {
-    background-color: var(--surface);
+    background: var(--surface);
     border: 1px solid var(--border-subtle);
   }
 
   .shield-card {
-    background-color: var(--surface-glass-card);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background:
+      linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.025),
+        rgba(255, 255, 255, 0.008)
+      ),
+      var(--surface-glass-card);
+
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+
     border: 1px solid var(--border-subtle);
-    border-radius: 0.75rem;
+    border-radius: 0.85rem;
   }
 
   .shield-card-interactive {
-    background-color: var(--surface-glass-card);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background:
+      linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.025),
+        rgba(255, 255, 255, 0.008)
+      ),
+      var(--surface-glass-card);
+
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+
     border: 1px solid var(--border-subtle);
-    border-radius: 0.75rem;
-    transition: all 0.2s ease-in-out;
+    border-radius: 0.85rem;
+
+    transition:
+      border-color 250ms ease,
+      box-shadow 250ms ease,
+      transform 250ms ease;
   }
 
   .shield-card-interactive:hover {
     border-color: var(--border-purple);
-    box-shadow: 0 0 20px -5px var(--purple-glow);
+    box-shadow: 0 0 30px -8px var(--purple-glow);
+    transform: translateY(-2px);
   }
 
-  /* --- 9. Glow Hierarchy Utilities --- */
+  /* =======================================================
+     GLOW
+     ======================================================= */
+
   .glow-purple-sm {
     box-shadow: 0 0 16px 0 var(--purple-glow);
   }
 
   .glow-purple {
-    box-shadow: 0 0 28px -2px var(--purple-glow-strong);
+    box-shadow: 0 0 30px -4px var(--purple-glow-strong);
   }
 
   .glow-danger {
-    box-shadow: 0 0 24px -2px var(--color-danger-glow);
+    box-shadow: 0 0 26px -4px var(--color-danger-glow);
   }
 
   .glow-safe {
-    box-shadow: 0 0 24px -2px var(--color-safe-glow);
+    box-shadow: 0 0 26px -4px var(--color-safe-glow);
   }
 
   .glow-suspicious {
-    box-shadow: 0 0 24px -2px var(--color-suspicious-glow);
+    box-shadow: 0 0 26px -4px var(--color-suspicious-glow);
   }
 
-  /* --- 10. Typography Badges & Labels --- */
+  /* =======================================================
+     MICRO UI
+     ======================================================= */
+
   .shield-badge-tag {
     font-size: 0.6875rem;
     font-weight: 600;
+    line-height: 1.5;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.14em;
+  }
+
+  .shield-divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.08),
+      transparent
+    );
+  }
+}
+
+/* =========================================================
+   RESPONSIVE TUNING
+   ========================================================= */
+
+@media (max-width: 1023px) {
+  :root {
+    --section-space: 5.5rem;
+    --section-space-large: 7rem;
+  }
+}
+
+@media (max-width: 639px) {
+  :root {
+    --section-space: 4.5rem;
+    --section-space-large: 6rem;
+  }
+
+  body {
+    line-height: 1.55;
   }
 }

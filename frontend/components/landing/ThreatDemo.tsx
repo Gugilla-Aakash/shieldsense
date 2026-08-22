@@ -1,354 +1,902 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  Activity,
+  AlertTriangle,
+  Ban,
+  Check,
+  ChevronRight,
+  Circle,
+  Cpu,
+  LockKeyhole,
+  Network,
+  ShieldAlert,
+  ShieldBan,
+  ShieldCheck,
+  Terminal,
+  Wifi,
+  X,
+} from "lucide-react";
+
+type Phase =
+  "boot" | "incoming" | "intercepted" | "analyzing" | "verdict" | "contained";
+
+const TERMINAL_LINES = [
+  {
+    type: "blue",
+    text: "[NET] Incoming connection detected",
+  },
+  {
+    type: "blue",
+    text: "[NET] Source: 185.XX.XX.42",
+  },
+  {
+    type: "orange",
+    text: "[WARN] Payload signature requires inspection",
+  },
+  {
+    type: "orange",
+    text: "[SCAN] Domain reputation: LOW",
+  },
+  {
+    type: "red",
+    text: "[FLAG] Credential harvesting pattern",
+  },
+  {
+    type: "red",
+    text: "[FLAG] Brand impersonation detected",
+  },
+  {
+    type: "orange",
+    text: "[SCAN] Urgency language: HIGH",
+  },
+  {
+    type: "red",
+    text: "[THREAT] Malicious intent confirmed",
+  },
+];
+
+const ANALYSIS_STEPS = [
+  "URL STRUCTURE",
+  "DOMAIN REPUTATION",
+  "LANGUAGE INTENT",
+  "BRAND IMPERSONATION",
+];
 
 export default function ThreatDemo() {
-  // State machine: idle -> intercepting -> analyzing -> calculating -> result
-  const [phase, setPhase] = useState<
-    "idle" | "intercepting" | "analyzing" | "calculating" | "result"
-  >("idle");
+  const [phase, setPhase] = useState<Phase>("boot");
+  const [terminalStep, setTerminalStep] = useState(0);
   const [analysisStep, setAnalysisStep] = useState(0);
   const [score, setScore] = useState(0);
-  const [indicatorStep, setIndicatorStep] = useState(0);
-  const [aiStep, setAiStep] = useState(0);
+  const [cursorVisible, setCursorVisible] = useState(true);
 
-  // Orchestrate the cinematic timeline
   useEffect(() => {
-    let timeout: NodeJS.Timeout;
+    const cursorTimer = setInterval(() => {
+      setCursorVisible((value) => !value);
+    }, 550);
 
-    if (phase === "idle") {
-      // Start almost immediately to avoid the user staring at an empty console
-      timeout = setTimeout(() => setPhase("intercepting"), 400);
-    } else if (phase === "intercepting") {
-      timeout = setTimeout(() => setPhase("analyzing"), 1000);
-    } else if (phase === "analyzing") {
-      if (analysisStep < 4) {
-        timeout = setTimeout(() => setAnalysisStep((s) => s + 1), 700);
-      } else {
-        timeout = setTimeout(() => setPhase("calculating"), 600);
-      }
-    } else if (phase === "calculating") {
-      // Rapid score rollup effect
-      let currentScore = 0;
-      const interval = setInterval(() => {
-        currentScore += Math.floor(Math.random() * 10) + 3;
-        if (currentScore >= 91) {
-          setScore(91);
-          clearInterval(interval);
-          timeout = setTimeout(() => setPhase("result"), 600);
-        } else {
-          setScore(currentScore);
-        }
-      }, 50);
-      return () => clearInterval(interval);
-    } else if (phase === "result") {
-      // Sequentially reveal evidence and AI text
-      if (indicatorStep < 4) {
-        timeout = setTimeout(() => setIndicatorStep((s) => s + 1), 300);
-      } else if (aiStep < 2) {
-        timeout = setTimeout(() => setAiStep((s) => s + 1), 800);
-      } else {
-        // Hold on result, then reset to loop
+    return () => clearInterval(cursorTimer);
+  }, []);
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout | undefined;
+    let interval: NodeJS.Timeout | undefined;
+
+    if (phase === "boot") {
+      timeout = setTimeout(() => setPhase("incoming"), 900);
+    }
+
+    if (phase === "incoming") {
+      timeout = setTimeout(() => setPhase("intercepted"), 1200);
+    }
+
+    if (phase === "intercepted") {
+      if (terminalStep < TERMINAL_LINES.length) {
         timeout = setTimeout(() => {
-          setPhase("idle");
-          setAnalysisStep(0);
-          setScore(0);
-          setIndicatorStep(0);
-          setAiStep(0);
-        }, 7000);
+          setTerminalStep((step) => step + 1);
+        }, 420);
+      } else {
+        timeout = setTimeout(() => setPhase("analyzing"), 700);
       }
     }
 
-    return () => clearTimeout(timeout);
-  }, [phase, analysisStep, indicatorStep, aiStep]);
+    if (phase === "analyzing") {
+      if (analysisStep < ANALYSIS_STEPS.length) {
+        timeout = setTimeout(() => {
+          setAnalysisStep((step) => step + 1);
+        }, 600);
+      } else {
+        let currentScore = 0;
 
-  // Dynamic progress percentage
-  const getProgress = () => {
-    if (phase === "idle") return 0;
-    if (phase === "intercepting") return 15;
-    if (phase === "analyzing") return 15 + analysisStep * 15; // Up to 75%
-    if (phase === "calculating") return 85 + Math.floor(score / 10);
-    if (phase === "result") return 100;
+        interval = setInterval(() => {
+          currentScore += Math.floor(Math.random() * 8) + 5;
+
+          if (currentScore >= 91) {
+            setScore(91);
+
+            if (interval) clearInterval(interval);
+
+            timeout = setTimeout(() => {
+              setPhase("verdict");
+            }, 700);
+
+            return;
+          }
+
+          setScore(currentScore);
+        }, 80);
+      }
+    }
+
+    if (phase === "verdict") {
+      timeout = setTimeout(() => {
+        setPhase("contained");
+      }, 4000);
+    }
+
+    if (phase === "contained") {
+      timeout = setTimeout(() => {
+        setPhase("boot");
+        setTerminalStep(0);
+        setAnalysisStep(0);
+        setScore(0);
+      }, 4500);
+    }
+
+    return () => {
+      if (timeout) clearTimeout(timeout);
+      if (interval) clearInterval(interval);
+    };
+  }, [phase, terminalStep, analysisStep]);
+
+  const progress = useMemo(() => {
+    if (phase === "boot") return 2;
+    if (phase === "incoming") return 12;
+    if (phase === "intercepted") {
+      return Math.min(45, 18 + terminalStep * 4);
+    }
+    if (phase === "analyzing") {
+      return Math.min(82, 48 + analysisStep * 8);
+    }
+    if (phase === "verdict" || phase === "contained") return 100;
+
     return 0;
-  };
+  }, [phase, terminalStep, analysisStep]);
 
-  // Helper for analysis row states
-  const renderRowState = (stepRequired: number, isFlagged: boolean = true) => {
-    if (
-      phase === "intercepting" ||
-      (phase === "analyzing" && analysisStep < stepRequired)
-    ) {
-      return (
-        <span className="text-[var(--text-muted)] animate-pulse flex items-center gap-2">
-          <span className="text-[10px]">◌</span> SCANNING
-        </span>
-      );
-    }
-    if (isFlagged) {
-      return (
-        <span className="text-[var(--color-danger)] flex items-center gap-2 animate-in zoom-in duration-300">
-          <span className="text-[10px]">⚠</span> FLAGGED
-        </span>
-      );
-    }
-    return (
-      <span className="text-[var(--color-safe)] flex items-center gap-2 animate-in zoom-in duration-300">
-        <span className="text-[10px]">✓</span> CHECKED
-      </span>
-    );
-  };
-
-  const isDanger =
-    phase === "result" || (phase === "calculating" && score > 60);
+  const isThreat =
+    phase === "verdict" ||
+    phase === "contained" ||
+    (phase === "analyzing" && score > 60);
 
   return (
-    <div className="relative w-full max-w-lg mx-auto">
-      {/* Investigation Telemetry (Almost invisible background details) */}
-      <div className="absolute -top-6 left-0 flex w-full justify-between text-[0.55rem] font-bold uppercase tracking-[0.25em] text-[var(--text-muted)] opacity-50">
-        <div className="flex gap-4">
-          <span>NODE_01</span>
-          <span
-            className={phase !== "idle" ? "text-[var(--purple-bright)]" : ""}
-          >
-            ENG_v0.1
-          </span>
-        </div>
-        <div className="flex gap-4">
-          <span>SECURE_CH</span>
-          <span>LATENCY 42ms</span>
-        </div>
-      </div>
+    <div className="relative mx-auto w-full max-w-[720px]">
+      {/* Ambient threat glow */}
+      <motion.div
+        animate={{
+          opacity: isThreat ? [0.12, 0.28, 0.12] : [0.06, 0.14, 0.06],
+          scale: isThreat ? [0.98, 1.05, 0.98] : [1, 1.02, 1],
+        }}
+        transition={{
+          duration: 2.4,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        className={`pointer-events-none absolute inset-[-10%] blur-[100px] ${
+          isThreat ? "bg-red-500/20" : "bg-blue-500/10"
+        }`}
+      />
 
+      {/* Terminal frame */}
       <div
-        className={`shield-card relative flex w-full flex-col overflow-hidden font-mono text-sm shadow-2xl transition-all duration-700 min-h-[460px] ${isDanger ? "border-[var(--color-danger-border)] shadow-[0_0_30px_-5px_var(--color-danger-glow)]" : ""}`}
+        className={`relative overflow-hidden border bg-[#030508] font-mono transition-all duration-700 ${
+          isThreat
+            ? "border-red-500/45 shadow-[0_0_80px_-25px_rgba(239,68,68,0.65)]"
+            : "border-blue-400/20 shadow-[0_0_80px_-35px_rgba(59,130,246,0.5)]"
+        }`}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-[var(--border-subtle)] bg-[var(--surface-elevated)] px-4 py-3">
-          <span className="flex items-center gap-3 text-xs font-semibold tracking-wider text-[var(--text-muted)]">
-            <span
-              className={`h-1.5 w-1.5 rounded-full transition-colors duration-500 ${isDanger ? "bg-[var(--color-danger)] glow-danger animate-pulse" : "bg-[var(--purple-bright)]"}`}
-            ></span>
-            SHIELDSENSE / LIVE_ANALYSIS
-          </span>
-          <span className="text-[0.65rem] tracking-widest text-[var(--text-muted)]">
-            SYSTEM_ACTIVE
-          </span>
+        {/* Matrix-style background */}
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.08]"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(59,130,246,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.35) 1px, transparent 1px)",
+            backgroundSize: "28px 28px",
+          }}
+        />
+
+        {/* Moving scan line */}
+        <motion.div
+          animate={{ y: ["-20%", "120%"] }}
+          transition={{
+            duration: 3.4,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+          className={`pointer-events-none absolute left-0 top-0 z-20 h-20 w-full bg-gradient-to-b from-transparent ${
+            isThreat ? "via-red-500/[0.07]" : "via-blue-500/[0.06]"
+          } to-transparent`}
+        />
+
+        {/* CRT noise */}
+        <div className="pointer-events-none absolute inset-0 opacity-[0.035] mix-blend-screen">
+          <div
+            className="h-full w-full"
+            style={{
+              backgroundImage:
+                "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.12) 3px)",
+            }}
+          />
         </div>
 
-        {/* Dynamic Body */}
-        <div className="relative flex flex-1 flex-col p-6">
-          {/* Phase 1 & 2: Intercepting, Analyzing, Calculating */}
-          {phase !== "result" && (
-            <div className="flex flex-col gap-6 animate-in fade-in duration-500">
-              {/* Threat Severity Header */}
-              <div className="flex flex-col gap-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-[0.65rem] font-bold tracking-[0.2em] text-[var(--text-muted)]">
-                    THREAT INTERCEPTED
-                  </span>
-                  <span
-                    className={`text-[0.65rem] font-bold tracking-[0.2em] transition-colors duration-500 ${analysisStep > 1 ? "text-[var(--color-suspicious)]" : "text-[var(--purple-bright)]"}`}
-                  >
-                    SUSPICIOUS ACTIVITY
-                  </span>
-                </div>
+        {/* Terminal header */}
+        <div className="relative z-10 flex items-center justify-between border-b border-white/[0.07] bg-white/[0.015] px-5 py-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-8 w-8 items-center justify-center border border-blue-400/25 bg-blue-500/[0.07]">
+              <Terminal className="h-4 w-4 text-blue-400" />
+            </div>
 
-                {/* Visual Evidence Block */}
-                <div className="rounded-md border border-[var(--border-subtle)] bg-[var(--bg-primary)] p-4 text-[var(--text-secondary)] shadow-inner relative overflow-hidden">
-                  {phase === "analyzing" && (
-                    <div className="absolute top-0 left-0 h-[1px] w-full bg-[var(--purple-bright)] opacity-50 animate-[scan_2s_linear_infinite]" />
-                  )}
-                  <p className="mb-3 text-sm text-[var(--text-primary)]">
-                    "Your account requires immediate verification."
-                  </p>
-                  <p className="truncate text-xs opacity-80">
-                    https://
-                    <span className="text-[var(--color-danger)] font-bold bg-[var(--color-danger-bg)] px-1 rounded">
-                      secure-bank-verification
-                    </span>
-                    .example/login
-                  </p>
-                </div>
+            <div>
+              <div className="text-[10px] font-bold tracking-[0.2em] text-white/80">
+                SHIELDSENSE
               </div>
 
-              {/* Analysis Engine */}
-              <div className="flex flex-col gap-3">
-                <span className="text-[0.65rem] font-bold tracking-[0.2em] text-[var(--text-muted)] flex items-center justify-between">
-                  <span>──────── ANALYSIS ENGINE ────────</span>
-                </span>
-
-                <div className="flex flex-col gap-2.5 text-xs">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[var(--text-secondary)]">
-                      URL STRUCTURE
-                    </span>
-                    {renderRowState(1, false)}
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[var(--text-secondary)]">
-                      DOMAIN REPUTATION
-                    </span>
-                    {renderRowState(2, true)}
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[var(--text-secondary)]">
-                      LANGUAGE INTENT
-                    </span>
-                    {renderRowState(3, true)}
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[var(--text-secondary)]">
-                      BRAND IMPERSONATION
-                    </span>
-                    {renderRowState(4, true)}
-                  </div>
-                </div>
-              </div>
-
-              {/* Progress Indicator */}
-              <div className="mt-auto flex flex-col gap-2 pt-4">
-                <div className="flex items-center justify-between text-[0.65rem] font-bold tracking-widest text-[var(--text-muted)]">
-                  <span>INVESTIGATION PROGRESS</span>
-                  <span>{getProgress()}%</span>
-                </div>
-                <div className="h-1 w-full bg-[var(--bg-tertiary)] rounded-full overflow-hidden">
-                  <div
-                    className={`h-full transition-all duration-500 ${phase === "calculating" ? "bg-[var(--color-suspicious)]" : "bg-[var(--purple-primary)]"}`}
-                    style={{ width: `${getProgress()}%` }}
-                  />
-                </div>
+              <div className="mt-1 flex items-center gap-2 text-[8px] tracking-[0.18em] text-white/25">
+                <span>DEFENSE_NODE_07</span>
+                <span>•</span>
+                <span className="text-blue-400">LIVE</span>
               </div>
             </div>
-          )}
+          </div>
 
-          {/* Phase 3: Result (Cinematic Reveal) */}
-          {phase === "result" && (
-            <div className="flex flex-col h-full gap-5 animate-in slide-in-from-bottom-4 fade-in duration-700">
-              {/* Risk Score Arc & Classification */}
-              <div className="flex flex-col items-center justify-center pt-2 pb-4">
-                <div className="relative flex items-center justify-center w-32 h-32">
-                  <svg
-                    className="absolute inset-0 w-full h-full -rotate-90 transform"
-                    viewBox="0 0 100 100"
-                  >
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="45"
-                      fill="none"
-                      stroke="var(--bg-tertiary)"
-                      strokeWidth="4"
+          <div className="flex items-center gap-4">
+            <div className="hidden items-center gap-2 text-[8px] tracking-[0.15em] text-white/25 sm:flex">
+              <Network className="h-3 w-3" />
+              SECURE_TUNNEL
+            </div>
+
+            <motion.div
+              animate={{
+                opacity: [0.25, 1, 0.25],
+              }}
+              transition={{
+                duration: 1.2,
+                repeat: Infinity,
+              }}
+              className={`h-2 w-2 rounded-full ${
+                isThreat ? "bg-red-500" : "bg-blue-400"
+              }`}
+            />
+          </div>
+        </div>
+
+        {/* Terminal body */}
+        <div className="relative z-10 p-6 sm:p-8">
+          <div className="min-h-[535px]">
+            <AnimatePresence mode="wait">
+              {/* BOOT */}
+              {phase === "boot" && (
+                <motion.div
+                  key="boot"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex min-h-[535px] flex-col justify-between"
+                >
+                  <div>
+                    <div className="mb-8 text-[10px] tracking-[0.22em] text-blue-400">
+                      INITIALIZING DEFENSE PROTOCOL
+                    </div>
+
+                    <div className="space-y-3 text-[11px] leading-6">
+                      <TerminalLine color="blue">
+                        booting ShieldSense core...
+                      </TerminalLine>
+
+                      <TerminalLine color="blue">
+                        loading heuristic engine...
+                      </TerminalLine>
+
+                      <TerminalLine color="orange">
+                        monitoring external traffic...
+                      </TerminalLine>
+
+                      <TerminalLine color="green">
+                        defense layer online
+                      </TerminalLine>
+
+                      <TerminalLine color="blue">
+                        awaiting incoming activity
+                      </TerminalLine>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-[9px] tracking-[0.18em] text-white/25">
+                    <span>{">"}</span>
+                    <span>LISTENING</span>
+
+                    <span
+                      className={`h-3 w-[6px] bg-blue-400 ${
+                        cursorVisible ? "opacity-100" : "opacity-0"
+                      }`}
                     />
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="45"
-                      fill="none"
-                      stroke="var(--color-danger)"
-                      strokeWidth="4"
-                      strokeDasharray="283"
-                      strokeDashoffset={283 - (283 * score) / 100}
-                      className="transition-all duration-1000 ease-out drop-shadow-[0_0_8px_rgba(239,68,68,0.6)]"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  <div className="flex flex-col items-center justify-center">
-                    <span className="text-4xl font-extrabold text-white tracking-tighter">
-                      {score}
-                    </span>
-                    <span className="text-[0.65rem] font-bold text-[var(--text-muted)]">
-                      / 100
-                    </span>
                   </div>
-                </div>
-                <span className="mt-4 text-sm font-bold tracking-[0.3em] text-[var(--color-danger)] drop-shadow-[0_0_8px_rgba(239,68,68,0.4)] animate-pulse">
-                  DANGEROUS
-                </span>
-              </div>
+                </motion.div>
+              )}
 
-              {/* Threat Indicators List */}
-              <div className="flex flex-col gap-1.5 px-2">
-                {indicatorStep > 0 && (
-                  <div className="flex items-center justify-between text-xs animate-in fade-in slide-in-from-left-2 duration-300">
-                    <span className="text-[var(--text-secondary)]">
-                      Lookalike domain
-                    </span>{" "}
-                    <span className="text-[var(--color-danger)] font-bold">
-                      +30
-                    </span>
-                  </div>
-                )}
-                {indicatorStep > 1 && (
-                  <div className="flex items-center justify-between text-xs animate-in fade-in slide-in-from-left-2 duration-300">
-                    <span className="text-[var(--text-secondary)]">
-                      Credential request
-                    </span>{" "}
-                    <span className="text-[var(--color-danger)] font-bold">
-                      +20
-                    </span>
-                  </div>
-                )}
-                {indicatorStep > 2 && (
-                  <div className="flex items-center justify-between text-xs animate-in fade-in slide-in-from-left-2 duration-300">
-                    <span className="text-[var(--text-secondary)]">
-                      Urgency language
-                    </span>{" "}
-                    <span className="text-[var(--color-danger)] font-bold">
-                      +15
-                    </span>
-                  </div>
-                )}
-                {indicatorStep > 3 && (
-                  <div className="flex items-center justify-between text-xs animate-in fade-in slide-in-from-left-2 duration-300">
-                    <span className="text-[var(--text-secondary)]">
-                      Brand impersonation
-                    </span>{" "}
-                    <span className="text-[var(--color-danger)] font-bold">
-                      +10
-                    </span>
-                  </div>
-                )}
-              </div>
+              {/* INCOMING */}
+              {phase === "incoming" && (
+                <motion.div
+                  key="incoming"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex min-h-[535px] flex-col"
+                >
+                  <div className="mb-8 flex items-center gap-3 border-b border-white/[0.06] pb-4">
+                    <Wifi className="h-4 w-4 text-blue-400" />
 
-              {/* AI Assessment Panel */}
-              {aiStep > 0 && (
-                <div className="mt-2 flex flex-col rounded-md border border-[var(--border-subtle)] bg-[var(--surface-glass)] p-4 shadow-lg animate-in zoom-in-95 fade-in duration-500">
-                  <div className="mb-2 flex items-center justify-between border-b border-[var(--border-subtle)] pb-2">
-                    <span className="flex items-center gap-2 text-[0.65rem] font-bold tracking-widest text-[var(--purple-bright)]">
-                      ✦ AI SECURITY ASSESSMENT
-                    </span>
-                    <span className="text-[0.55rem] tracking-widest text-[var(--text-muted)]">
-                      CONFIDENCE:{" "}
-                      <span className="text-[var(--color-danger)]">HIGH</span>
+                    <span className="text-[10px] font-bold tracking-[0.22em] text-blue-300">
+                      INCOMING CONNECTION
                     </span>
                   </div>
-                  <p className="text-xs leading-relaxed text-[var(--text-primary)]">
-                    This appears to be a phishing attempt designed to capture
-                    account credentials.
-                    {aiStep > 1 && (
-                      <span className="text-[var(--text-secondary)] animate-in fade-in duration-500">
-                        {" "}
-                        It uses urgency and impersonates a legitimate financial
-                        service to pressure the user.
-                      </span>
+
+                  <div className="space-y-5 text-[11px]">
+                    <TerminalLine color="blue">
+                      source: 185.XX.XX.42
+                    </TerminalLine>
+
+                    <TerminalLine color="blue">
+                      protocol: HTTPS / TCP
+                    </TerminalLine>
+
+                    <TerminalLine color="orange">
+                      payload: suspicious
+                    </TerminalLine>
+
+                    <TerminalLine color="orange">
+                      destination: secure-bank-verification.example
+                    </TerminalLine>
+
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.9 }}
+                      className="mt-8 border border-orange-500/20 bg-orange-500/[0.035] p-5"
+                    >
+                      <div className="mb-3 flex items-center gap-2 text-[9px] font-bold tracking-[0.2em] text-orange-400">
+                        <AlertTriangle className="h-3.5 w-3.5" />
+                        ANOMALY DETECTED
+                      </div>
+
+                      <p className="text-[10px] leading-6 text-white/50">
+                        Incoming request contains indicators associated with
+                        credential harvesting and impersonation.
+                      </p>
+                    </motion.div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* TERMINAL ANALYSIS */}
+              {phase === "intercepted" && (
+                <motion.div
+                  key="intercepted"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex min-h-[535px] flex-col"
+                >
+                  <div className="mb-5 flex items-center justify-between border-b border-white/[0.06] pb-4">
+                    <span className="text-[10px] font-bold tracking-[0.2em] text-red-400">
+                      THREAT INTERCEPTED
+                    </span>
+
+                    <span className="text-[8px] tracking-[0.16em] text-white/25">
+                      ANALYSIS STREAM
+                    </span>
+                  </div>
+
+                  <div className="flex-1 space-y-3">
+                    {TERMINAL_LINES.slice(0, terminalStep).map(
+                      (line, index) => (
+                        <motion.div
+                          key={`${line.text}-${index}`}
+                          initial={{
+                            opacity: 0,
+                            x: -12,
+                          }}
+                          animate={{
+                            opacity: 1,
+                            x: 0,
+                          }}
+                          className={`text-[10px] leading-6 ${
+                            line.type === "red"
+                              ? "text-red-400"
+                              : line.type === "orange"
+                                ? "text-orange-300"
+                                : "text-blue-300"
+                          }`}
+                        >
+                          <span className="mr-2 text-white/20">{">"}</span>
+
+                          {line.text}
+                        </motion.div>
+                      ),
                     )}
-                  </p>
-                </div>
+
+                    <div className="flex items-center gap-2 pt-2 text-[10px] text-white/35">
+                      <span>{">"}</span>
+
+                      <span
+                        className={`h-3 w-[6px] bg-blue-400 ${
+                          cursorVisible ? "opacity-100" : "opacity-0"
+                        }`}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Progress */}
+                  <div className="mt-auto pt-8">
+                    <div className="mb-3 flex justify-between text-[8px] tracking-[0.16em] text-white/25">
+                      <span>INTERCEPTION PROGRESS</span>
+                      <span>{progress}%</span>
+                    </div>
+
+                    <div className="h-[3px] bg-white/[0.06]">
+                      <motion.div
+                        animate={{ width: `${progress}%` }}
+                        transition={{ duration: 0.3 }}
+                        className="h-full bg-blue-400 shadow-[0_0_10px_rgba(59,130,246,0.8)]"
+                      />
+                    </div>
+                  </div>
+                </motion.div>
               )}
 
-              {/* Simulated Block Action */}
-              {aiStep > 1 && (
-                <button className="group mt-auto flex w-full items-center justify-center gap-2 rounded bg-[var(--color-danger)] py-3 text-xs font-bold tracking-[0.2em] text-white shadow-[0_0_15px_var(--color-danger-glow)] transition-all hover:bg-red-500 hover:shadow-[0_0_25px_var(--color-danger-glow)] hover:brightness-110 animate-in slide-in-from-bottom-2 fade-in duration-500">
-                  <span className="text-base group-hover:rotate-12 transition-transform">
-                    ⛨
-                  </span>{" "}
-                  BLOCK THREAT
-                </button>
+              {/* ANALYSIS */}
+              {phase === "analyzing" && (
+                <motion.div
+                  key="analyzing"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex min-h-[535px] flex-col"
+                >
+                  <div className="mb-7 flex items-center justify-between border-b border-white/[0.06] pb-4">
+                    <div className="flex items-center gap-2">
+                      <Cpu className="h-4 w-4 text-purple-400" />
+
+                      <span className="text-[10px] font-bold tracking-[0.2em] text-purple-300">
+                        HEURISTIC ANALYSIS
+                      </span>
+                    </div>
+
+                    <span className="text-[8px] tracking-[0.14em] text-purple-400/60">
+                      ENGINE_ACTIVE
+                    </span>
+                  </div>
+
+                  <div className="space-y-5">
+                    {ANALYSIS_STEPS.map((step, index) => {
+                      const visible = analysisStep > index;
+
+                      return (
+                        <motion.div
+                          key={step}
+                          animate={{
+                            opacity: visible ? 1 : 0.25,
+                          }}
+                          className="grid grid-cols-[1fr_auto] items-center gap-4"
+                        >
+                          <div>
+                            <div className="text-[10px] tracking-[0.12em] text-white/65">
+                              {step}
+                            </div>
+
+                            <div className="mt-1 text-[8px] tracking-[0.12em] text-white/20">
+                              {visible
+                                ? "SIGNAL EVALUATED"
+                                : "WAITING FOR ENGINE"}
+                            </div>
+                          </div>
+
+                          {visible ? (
+                            <motion.span
+                              initial={{
+                                opacity: 0,
+                                scale: 0.7,
+                              }}
+                              animate={{
+                                opacity: 1,
+                                scale: 1,
+                              }}
+                              className={`flex items-center gap-1.5 text-[8px] font-bold tracking-[0.12em] ${
+                                index === 0 ? "text-blue-400" : "text-red-400"
+                              }`}
+                            >
+                              {index === 0 ? (
+                                <Check className="h-3 w-3" />
+                              ) : (
+                                <AlertTriangle className="h-3 w-3" />
+                              )}
+
+                              {index === 0 ? "CLEAR" : "FLAGGED"}
+                            </motion.span>
+                          ) : (
+                            <span className="text-[8px] tracking-[0.12em] text-white/20">
+                              SCANNING
+                            </span>
+                          )}
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="mt-auto pt-10">
+                    <div className="mb-3 flex items-center justify-between">
+                      <span className="text-[8px] tracking-[0.18em] text-white/25">
+                        RISK CALCULATION
+                      </span>
+
+                      <span
+                        className={`text-[10px] font-bold ${
+                          score > 60 ? "text-red-400" : "text-orange-400"
+                        }`}
+                      >
+                        {score}%
+                      </span>
+                    </div>
+
+                    <div className="relative h-1 bg-white/[0.06]">
+                      <motion.div
+                        animate={{ width: `${score}%` }}
+                        transition={{ duration: 0.25 }}
+                        className={`h-full ${
+                          score > 60
+                            ? "bg-red-500 shadow-[0_0_12px_rgba(239,68,68,0.75)]"
+                            : "bg-orange-400"
+                        }`}
+                      />
+                    </div>
+                  </div>
+                </motion.div>
               )}
-            </div>
-          )}
+
+              {/* VERDICT */}
+              {phase === "verdict" && (
+                <motion.div
+                  key="verdict"
+                  initial={{
+                    opacity: 0,
+                    scale: 0.96,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    scale: 1,
+                  }}
+                  className="flex min-h-[535px] flex-col"
+                >
+                  <div className="flex flex-col items-center pt-2 text-center">
+                    <motion.div
+                      initial={{ scale: 0.7, opacity: 0 }}
+                      animate={{
+                        scale: 1,
+                        opacity: 1,
+                      }}
+                      className="relative flex h-32 w-32 items-center justify-center"
+                    >
+                      <motion.div
+                        animate={{
+                          scale: [1, 1.12, 1],
+                          opacity: [0.15, 0.35, 0.15],
+                        }}
+                        transition={{
+                          duration: 1.8,
+                          repeat: Infinity,
+                        }}
+                        className="absolute inset-3 rounded-full bg-red-500 blur-2xl"
+                      />
+
+                      <svg
+                        className="absolute inset-0 h-full w-full -rotate-90"
+                        viewBox="0 0 100 100"
+                      >
+                        <circle
+                          cx="50"
+                          cy="50"
+                          r="44"
+                          fill="none"
+                          stroke="rgba(255,255,255,0.06)"
+                          strokeWidth="2"
+                        />
+
+                        <motion.circle
+                          cx="50"
+                          cy="50"
+                          r="44"
+                          fill="none"
+                          stroke="#ef4444"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeDasharray="276"
+                          initial={{
+                            strokeDashoffset: 276,
+                          }}
+                          animate={{
+                            strokeDashoffset: 276 - (276 * score) / 100,
+                          }}
+                          transition={{
+                            duration: 1.1,
+                          }}
+                          className="drop-shadow-[0_0_10px_rgba(239,68,68,0.85)]"
+                        />
+                      </svg>
+
+                      <div className="relative z-10">
+                        <div className="text-4xl font-black text-white">
+                          {score}
+                        </div>
+
+                        <div className="mt-1 text-[7px] tracking-[0.25em] text-white/30">
+                          RISK SCORE
+                        </div>
+                      </div>
+                    </motion.div>
+
+                    <motion.div
+                      initial={{
+                        opacity: 0,
+                        y: 8,
+                      }}
+                      animate={{
+                        opacity: 1,
+                        y: 0,
+                      }}
+                      transition={{
+                        delay: 0.35,
+                      }}
+                      className="mt-6 flex items-center gap-2 text-[10px] font-bold tracking-[0.26em] text-red-400"
+                    >
+                      <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-500" />
+                      CRITICAL THREAT
+                    </motion.div>
+                  </div>
+
+                  <div className="mt-10 space-y-4">
+                    <VerdictRow
+                      label="Credential harvesting"
+                      value="DETECTED"
+                    />
+                    <VerdictRow label="Domain impersonation" value="DETECTED" />
+                    <VerdictRow label="Urgency manipulation" value="DETECTED" />
+                    <VerdictRow label="Malicious intent" value="CONFIRMED" />
+                  </div>
+
+                  <div className="mt-auto pt-8">
+                    <div className="mb-3 flex items-center gap-2 text-[8px] tracking-[0.16em] text-white/25">
+                      <ShieldAlert className="h-3 w-3 text-red-400" />
+                      DEFENSIVE ACTION REQUIRED
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2">
+                      <ActionButton
+                        icon={<ShieldBan className="h-3.5 w-3.5" />}
+                        label="BLOCK"
+                        danger
+                      />
+
+                      <ActionButton
+                        icon={<ShieldCheck className="h-3.5 w-3.5" />}
+                        label="ISOLATE"
+                      />
+
+                      <ActionButton
+                        icon={<ShieldCheck className="h-3.5 w-3.5" />}
+                        label="ALLOW"
+                        muted
+                      />
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* CONTAINED */}
+              {phase === "contained" && (
+                <motion.div
+                  key="contained"
+                  initial={{
+                    opacity: 0,
+                    scale: 0.96,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    scale: 1,
+                  }}
+                  className="flex min-h-[535px] flex-col items-center justify-center text-center"
+                >
+                  <motion.div
+                    initial={{ scale: 0.6 }}
+                    animate={{ scale: 1 }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 180,
+                    }}
+                    className="flex h-20 w-20 items-center justify-center border border-emerald-400/30 bg-emerald-500/[0.08]"
+                  >
+                    <ShieldCheck className="h-9 w-9 text-emerald-400" />
+                  </motion.div>
+
+                  <motion.div
+                    initial={{
+                      opacity: 0,
+                      y: 10,
+                    }}
+                    animate={{
+                      opacity: 1,
+                      y: 0,
+                    }}
+                    transition={{
+                      delay: 0.2,
+                    }}
+                    className="mt-7"
+                  >
+                    <div className="text-sm font-bold tracking-[0.22em] text-emerald-400">
+                      THREAT CONTAINED
+                    </div>
+
+                    <p className="mx-auto mt-4 max-w-sm text-[10px] leading-6 text-white/40">
+                      ShieldSense intercepted the malicious request before
+                      execution and isolated the threat from the protected
+                      environment.
+                    </p>
+                  </motion.div>
+
+                  <div className="mt-10 w-full max-w-md border border-emerald-500/15 bg-emerald-500/[0.025] p-5 text-left">
+                    <div className="mb-3 text-[8px] font-bold tracking-[0.18em] text-emerald-400">
+                      DEFENSE LOG
+                    </div>
+
+                    <div className="space-y-2 text-[9px] tracking-[0.06em] text-white/35">
+                      <div>&gt; malicious request blocked</div>
+                      <div>&gt; payload isolated</div>
+                      <div>&gt; credentials protected</div>
+                      <div>&gt; user environment safe</div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="relative z-10 flex items-center justify-between border-t border-white/[0.06] px-5 py-3">
+          <div className="flex items-center gap-4 text-[7px] tracking-[0.18em] text-white/20">
+            <span className="flex items-center gap-1.5">
+              <Activity className="h-3 w-3" />
+              REAL_TIME
+            </span>
+
+            <span className="flex items-center gap-1.5">
+              <LockKeyhole className="h-3 w-3" />
+              ENCRYPTED
+            </span>
+          </div>
+
+          <span
+            className={`text-[7px] tracking-[0.2em] ${
+              isThreat ? "text-red-400/60" : "text-blue-400/50"
+            }`}
+          >
+            {phase === "contained"
+              ? "DEFENSE_COMPLETE"
+              : "SHIELDSENSE_ENGINE_01"}
+          </span>
         </div>
       </div>
     </div>
+  );
+}
+
+/* =========================================================
+   TERMINAL LINE
+   ========================================================= */
+
+function TerminalLine({
+  children,
+  color,
+}: {
+  children: React.ReactNode;
+  color: "blue" | "orange" | "red" | "green";
+}) {
+  const colorClass = {
+    blue: "text-blue-300",
+    orange: "text-orange-300",
+    red: "text-red-400",
+    green: "text-emerald-400",
+  }[color];
+
+  return (
+    <motion.div
+      initial={{
+        opacity: 0,
+        x: -8,
+      }}
+      animate={{
+        opacity: 1,
+        x: 0,
+      }}
+      className={colorClass}
+    >
+      <span className="mr-2 text-white/20">&gt;</span>
+      {children}
+    </motion.div>
+  );
+}
+
+/* =========================================================
+   VERDICT ROW
+   ========================================================= */
+
+function VerdictRow({ label, value }: { label: string; value: string }) {
+  return (
+    <motion.div
+      initial={{
+        opacity: 0,
+        x: -10,
+      }}
+      animate={{
+        opacity: 1,
+        x: 0,
+      }}
+      transition={{
+        duration: 0.3,
+      }}
+      className="flex items-center justify-between border-b border-white/[0.05] pb-3"
+    >
+      <span className="text-[9px] tracking-[0.1em] text-white/45">{label}</span>
+
+      <span className="flex items-center gap-1.5 text-[8px] font-bold tracking-[0.12em] text-red-400">
+        <AlertTriangle className="h-3 w-3" />
+        {value}
+      </span>
+    </motion.div>
+  );
+}
+
+/* =========================================================
+   ACTION BUTTON
+   ========================================================= */
+
+function ActionButton({
+  icon,
+  label,
+  danger = false,
+  muted = false,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  danger?: boolean;
+  muted?: boolean;
+}) {
+  return (
+    <motion.button
+      whileHover={{
+        y: -2,
+      }}
+      whileTap={{
+        scale: 0.98,
+      }}
+      className={`flex h-11 items-center justify-center gap-2 border text-[8px] font-bold tracking-[0.18em] transition-all ${
+        danger
+          ? "border-red-500/45 bg-red-500/10 text-red-300 hover:bg-red-500/20 hover:shadow-[0_0_20px_rgba(239,68,68,0.2)]"
+          : muted
+            ? "border-white/[0.07] bg-white/[0.02] text-white/30 hover:border-white/15 hover:text-white/60"
+            : "border-orange-400/25 bg-orange-400/[0.05] text-orange-300 hover:bg-orange-400/10"
+      }`}
+    >
+      {icon}
+      {label}
+
+      {!muted && <ChevronRight className="h-3 w-3 opacity-40" />}
+    </motion.button>
   );
 }

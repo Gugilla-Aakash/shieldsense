@@ -1,97 +1,184 @@
+"use client";
+
 import React from "react";
+import { motion } from "framer-motion";
+import {
+  Shield,
+  Zap,
+  Lock,
+  ChevronRight,
+  Activity,
+  ArrowUpRight,
+} from "lucide-react";
 import ThreatDemo from "./ThreatDemo";
 
 export default function Hero() {
   return (
-    <section className="relative flex min-h-[calc(100vh-5rem)] items-center overflow-hidden bg-[var(--bg-base)]">
-      {/* Subtle Technical Grid Background */}
+    <section className="relative isolate flex min-h-screen w-full flex-col overflow-hidden bg-bg-base">
+      {/* Ambient security glow */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-[0.15]"
+        className="pointer-events-none absolute inset-0 opacity-70"
         style={{
-          backgroundImage:
-            "linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px)",
-          backgroundSize: "4rem 4rem",
-          maskImage:
-            "radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%)",
-          WebkitMaskImage:
-            "radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%)",
+          background:
+            "radial-gradient(circle at 68% 38%, rgba(139,92,246,0.14), transparent 28%), radial-gradient(circle at 18% 70%, rgba(124,58,237,0.08), transparent 28%)",
         }}
       />
 
-      <div className="shield-container relative z-10 flex flex-col items-center justify-between gap-16 py-16 lg:flex-row lg:py-24">
-        {/* LEFT — MESSAGE (60%) */}
-        <div className="flex w-full flex-col items-start gap-8 lg:w-[55%]">
-          <div className="flex items-center gap-3">
-            <span className="h-[1px] w-8 bg-[var(--purple-bright)] opacity-50"></span>
-            <span className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--purple-bright)]">
-              AI-Powered Digital Security
-            </span>
-          </div>
+      {/* Technical grid */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.14]"
+        style={{
+          backgroundImage:
+            "linear-gradient(to right, rgba(139, 92, 246, 0.12) 1px, transparent 1px), linear-gradient(to bottom, rgba(139, 92, 246, 0.12) 1px, transparent 1px)",
+          backgroundSize: "4rem 4rem",
+          maskImage:
+            "radial-gradient(ellipse 90% 75% at 50% 45%, black 30%, transparent 100%)",
+          WebkitMaskImage:
+            "radial-gradient(ellipse 90% 75% at 50% 45%, black 30%, transparent 100%)",
+        }}
+      />
 
-          <h1 className="flex flex-col text-5xl font-extrabold leading-[1.1] tracking-tight text-white sm:text-6xl lg:text-7xl">
-            <span>Don't just know</span>
-            <span className="text-[var(--text-secondary)]">
-              it's dangerous.
-            </span>
-            <span className="mt-2 bg-gradient-to-r from-[var(--purple-light)] to-[var(--purple-primary)] bg-clip-text text-transparent drop-shadow-sm">
-              KNOW WHY.
-            </span>
-          </h1>
+      {/* Top atmospheric line */}
+      <div className="pointer-events-none absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-purple-primary/50 to-transparent" />
 
-          <p className="max-w-xl text-lg leading-relaxed text-[var(--text-secondary)]">
-            ShieldSense investigates suspicious links, files, emails, and
-            messages using security analysis and AI reasoning — so you can make
-            safer decisions before you click.
-          </p>
-
-          <div className="mt-2 flex w-full flex-col gap-4 sm:flex-row sm:items-center">
-            <button className="glow-purple-sm group flex items-center justify-center gap-2 rounded-md bg-[var(--purple-primary)] px-8 py-3.5 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-[var(--purple-bright)]">
-              Start Investigation
-              <span className="transition-transform group-hover:translate-x-1">
-                →
+      {/* Main hero */}
+      <div className="relative z-10 mx-auto flex w-full max-w-[1500px] flex-1 items-center px-6 pb-20 pt-32 sm:px-8 lg:px-12 xl:px-16">
+        <div className="grid w-full items-center gap-16 lg:grid-cols-[0.92fr_1.08fr] lg:gap-14 xl:gap-20">
+          {/* LEFT */}
+          <motion.div
+            initial={{ opacity: 0, x: -28 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="flex max-w-2xl flex-col"
+          >
+            {/* Threat status */}
+            <div className="mb-7 flex items-center gap-3">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-purple-bright opacity-60" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-purple-bright" />
               </span>
-            </button>
-            <button className="group flex items-center justify-center gap-2 px-8 py-3.5 text-sm font-medium text-[var(--text-muted)] transition-colors hover:text-white">
-              Explore the System
-              <span className="transition-transform group-hover:translate-y-1">
-                ↓
+
+              <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.28em] text-purple-bright">
+                AI THREAT INTELLIGENCE // ACTIVE
               </span>
-            </button>
-          </div>
+            </div>
 
-          <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-[0.65rem] font-bold uppercase tracking-widest text-[var(--text-muted)]">
-            <span className="flex items-center gap-2">
-              <span className="text-[var(--text-secondary)]">●</span> Heuristic
-              Analysis
-            </span>
-            <span className="flex items-center gap-2">
-              <span className="text-[var(--text-secondary)]">●</span> AI
-              Reasoning
-            </span>
-            <span className="flex items-center gap-2">
-              <span className="text-[var(--text-secondary)]">●</span>{" "}
-              Explainable Results
-            </span>
-          </div>
-        </div>
+            {/* Heading */}
+            <h1 className="max-w-3xl text-[3.8rem] font-black leading-[0.98] tracking-[-0.045em] text-white sm:text-6xl lg:text-7xl xl:text-[5.4rem]">
+              <span className="block">Don't just know</span>
 
-        {/* RIGHT — SECURITY SYSTEM CONSOLE (40%) */}
-        <div className="relative w-full lg:w-[45%]">
-          {/* Hero Background Radial Light */}
-          <div className="absolute left-1/2 top-1/2 -z-10 h-[120%] w-[120%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--purple-glow)] blur-[100px] pointer-events-none" />
+              <span className="block text-white/35">it's dangerous.</span>
 
-          {/* Security Signal pointing to the console */}
-          <div className="absolute -left-12 top-16 hidden items-center gap-1 text-[var(--purple-bright)] opacity-60 lg:flex z-20">
-            <span className="h-1.5 w-1.5 rounded-full bg-[var(--purple-bright)] animate-pulse shadow-[0_0_8px_var(--purple-bright)]"></span>
-            <span className="font-mono text-xs tracking-[-0.15em]">
-              ────────────→
-            </span>
-          </div>
+              <span className="mt-3 block bg-gradient-to-r from-violet-300 via-purple-400 to-fuchsia-400 bg-clip-text text-transparent">
+                KNOW WHY.
+              </span>
+            </h1>
 
-          {/* Animated Component */}
-          <ThreatDemo />
+            {/* Supporting copy */}
+            <p className="mt-8 max-w-xl text-base leading-8 text-text-secondary sm:text-lg">
+              ShieldSense reverse-engineers suspicious links, files, and emails
+              before they can become incidents — exposing the signals,
+              reasoning, and evidence behind every threat verdict.
+            </p>
+
+            {/* CTAs */}
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <button className="group inline-flex h-12 items-center justify-center gap-3 border border-purple-400/50 bg-purple-primary px-6 text-sm font-semibold text-white shadow-[0_0_32px_rgba(139,92,246,0.22)] transition-all duration-300 hover:-translate-y-0.5 hover:border-purple-300 hover:bg-purple-600 hover:shadow-[0_0_42px_rgba(139,92,246,0.34)]">
+                Start Investigation
+                <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </button>
+
+              <button className="group inline-flex h-12 items-center gap-2 px-4 text-sm font-medium text-text-muted transition-colors hover:text-white">
+                View live analysis
+                <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              </button>
+            </div>
+
+            {/* Capability rail */}
+            <div className="mt-10 flex flex-wrap gap-x-8 gap-y-4 border-t border-white/[0.07] pt-6">
+              <span className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-text-muted">
+                <Shield className="h-3.5 w-3.5 text-purple-primary" />
+                Heuristic Analysis
+              </span>
+
+              <span className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-text-muted">
+                <Zap className="h-3.5 w-3.5 text-purple-primary" />
+                Neural Reasoning
+              </span>
+
+              <span className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-text-muted">
+                <Lock className="h-3.5 w-3.5 text-purple-primary" />
+                Encrypted Pipeline
+              </span>
+            </div>
+          </motion.div>
+
+          {/* RIGHT — PRODUCT VISUAL */}
+          <motion.div
+            initial={{ opacity: 0, x: 30, scale: 0.97 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            transition={{ duration: 0.9, delay: 0.12, ease: "easeOut" }}
+            className="relative flex items-center justify-center lg:justify-end"
+          >
+            {/* Controlled glow */}
+            <div className="pointer-events-none absolute left-1/2 top-1/2 h-[80%] w-[80%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-purple-glow/60 blur-[120px]" />
+
+            {/* Fine orbit lines */}
+            <div className="pointer-events-none absolute h-[88%] w-[88%] rounded-[2rem] border border-purple-primary/[0.08]" />
+            <div className="pointer-events-none absolute h-[76%] w-[76%] rounded-[1.5rem] border border-purple-primary/[0.06]" />
+
+            <div className="relative w-full max-w-[700px] lg:-mr-4 xl:-mr-8">
+              <ThreatDemo />
+            </div>
+          </motion.div>
         </div>
       </div>
+
+      {/* Trust / performance rail */}
+      <motion.div
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.45 }}
+        className="relative z-10 border-t border-white/[0.06] bg-white/[0.015]"
+      >
+        <div className="mx-auto grid w-full max-w-[1500px] grid-cols-2 divide-x divide-white/[0.06] lg:grid-cols-4">
+          <div className="px-6 py-8 text-center sm:px-10">
+            <h4 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
+              5M+
+            </h4>
+            <p className="mt-2 text-[11px] uppercase tracking-[0.16em] text-text-muted">
+              Identities Protected
+            </p>
+          </div>
+
+          <div className="px-6 py-8 text-center sm:px-10">
+            <h4 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
+              99.9%
+            </h4>
+            <p className="mt-2 text-[11px] uppercase tracking-[0.16em] text-text-muted">
+              Detection Availability
+            </p>
+          </div>
+
+          <div className="px-6 py-8 text-center sm:px-10">
+            <h4 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
+              150+
+            </h4>
+            <p className="mt-2 text-[11px] uppercase tracking-[0.16em] text-text-muted">
+              Countries Secured
+            </p>
+          </div>
+
+          <div className="px-6 py-8 text-center sm:px-10">
+            <h4 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
+              &lt; 200ms
+            </h4>
+            <p className="mt-2 text-[11px] uppercase tracking-[0.16em] text-text-muted">
+              Average Threat Response
+            </p>
+          </div>
+        </div>
+      </motion.div>
     </section>
   );
 }
