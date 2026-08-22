@@ -1,8 +1,7 @@
 import Navbar from "../components/landing/Navbar";
 import Hero from "../components/landing/Hero";
-// import ThreatDemo from '../components/landing/ThreatDemo';
 import ProblemSection from "../components/landing/ProblemSection";
-// import HowItWorks from '../components/landing/HowItWorks';
+import HowItWorks from "../components/landing/HowItWorks";
 // import SecurityCapabilities from '../components/landing/SecurityCapabilities';
 // import FinalCTA from '../components/landing/FinalCTA';
 // import Footer from '../components/landing/Footer';
@@ -17,16 +16,11 @@ export default function LandingPage() {
         {/* 2. HERO: "Something suspicious just arrived." */}
         <Hero />
 
-        {/* 3. LIVE THREAT INVESTIGATION (Handled entirely inside Hero visually for the landing page) */}
-        {/* We removed the redundant ThreatDemo placeholder section since it is inside the Hero now */}
-
         {/* 4. PROBLEM: "Why can't normal security catch this?" */}
         <ProblemSection />
 
         {/* 5. HOW IT WORKS: Detect → Investigate → Explain → Protect */}
-        <section className="border-y border-[var(--border-subtle)] bg-[var(--bg-secondary)] py-24 text-center text-[var(--text-muted)]">
-          [ HOW IT WORKS ]
-        </section>
+        <HowItWorks />
 
         {/* 6. CAPABILITIES: Links / Emails / Files / Messages */}
         <section className="py-24 text-center text-[var(--text-muted)]">
