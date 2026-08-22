@@ -36,7 +36,7 @@ export default function Footer() {
               </span>
               <div className="flex flex-col gap-3 text-xs text-text-muted">
                 <Link
-                  href="/scan"
+                  href="/scanner"
                   className="transition-colors hover:text-purple-bright"
                 >
                   Scan
@@ -48,7 +48,7 @@ export default function Footer() {
                   How It Works
                 </Link>
                 <Link
-                  href="/history"
+                  href="/dashboard"
                   className="transition-colors hover:text-purple-bright"
                 >
                   History
