@@ -8,10 +8,10 @@ import Footer from "../components/landing/Footer";
 
 export default function LandingPage() {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="relative min-h-screen overflow-x-clip bg-[#050507]">
       <Navbar />
 
-      <main className="flex flex-1 flex-col">
+      <main className="relative">
         <Hero />
         <ProblemSection />
         <HowItWorks />
