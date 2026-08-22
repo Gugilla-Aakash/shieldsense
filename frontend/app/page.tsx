@@ -1,7 +1,7 @@
 import Navbar from "../components/landing/Navbar";
-// import Hero from '../components/landing/Hero';
+import Hero from "../components/landing/Hero";
 // import ThreatDemo from '../components/landing/ThreatDemo';
-// import ProblemSection from '../components/landing/ProblemSection';
+import ProblemSection from "../components/landing/ProblemSection";
 // import HowItWorks from '../components/landing/HowItWorks';
 // import SecurityCapabilities from '../components/landing/SecurityCapabilities';
 // import FinalCTA from '../components/landing/FinalCTA';
@@ -9,28 +9,22 @@ import Navbar from "../components/landing/Navbar";
 
 export default function LandingPage() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex min-h-screen flex-col">
       {/* 1. NAVIGATION */}
       <Navbar />
 
-      <main className="flex-1 flex flex-col">
+      <main className="flex flex-1 flex-col">
         {/* 2. HERO: "Something suspicious just arrived." */}
-        <section className="py-24 text-center text-[var(--text-muted)]">
-          [ HERO SECTION ]
-        </section>
+        <Hero />
 
-        {/* 3. LIVE THREAT INVESTIGATION */}
-        <section className="py-24 text-center text-[var(--text-muted)] bg-[var(--bg-secondary)] border-y border-[var(--border-subtle)]">
-          [ THREAT DEMO ]
-        </section>
+        {/* 3. LIVE THREAT INVESTIGATION (Handled entirely inside Hero visually for the landing page) */}
+        {/* We removed the redundant ThreatDemo placeholder section since it is inside the Hero now */}
 
         {/* 4. PROBLEM: "Why can't normal security catch this?" */}
-        <section className="py-24 text-center text-[var(--text-muted)]">
-          [ PROBLEM SECTION ]
-        </section>
+        <ProblemSection />
 
         {/* 5. HOW IT WORKS: Detect → Investigate → Explain → Protect */}
-        <section className="py-24 text-center text-[var(--text-muted)] bg-[var(--bg-secondary)] border-y border-[var(--border-subtle)]">
+        <section className="border-y border-[var(--border-subtle)] bg-[var(--bg-secondary)] py-24 text-center text-[var(--text-muted)]">
           [ HOW IT WORKS ]
         </section>
 
@@ -40,13 +34,13 @@ export default function LandingPage() {
         </section>
 
         {/* 7. CTA: "Ready to investigate?" */}
-        <section className="py-24 text-center text-[var(--text-muted)] bg-gradient-to-b from-transparent to-[var(--bg-tertiary)]">
+        <section className="bg-gradient-to-b from-transparent to-[var(--bg-tertiary)] py-24 text-center text-[var(--text-muted)]">
           [ FINAL CTA ]
         </section>
       </main>
 
       {/* 8. FOOTER */}
-      <footer className="py-8 border-t border-[var(--border-subtle)] text-center text-xs text-[var(--text-muted)]">
+      <footer className="border-t border-[var(--border-subtle)] py-8 text-center text-xs text-[var(--text-muted)]">
         [ FOOTER ]
       </footer>
     </div>
