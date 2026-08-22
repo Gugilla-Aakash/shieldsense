@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import {
   Shield,
@@ -8,7 +9,6 @@ import {
   Lock,
   ChevronRight,
   ArrowUpRight,
-  Activity,
   ScanLine,
 } from "lucide-react";
 import ThreatDemo from "./ThreatDemo";
@@ -69,7 +69,6 @@ export default function Hero() {
       {/* ============================================================
           BACKGROUND ATMOSPHERE
       ============================================================ */}
-
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         {/* Main purple atmosphere */}
         <motion.div
@@ -137,13 +136,11 @@ export default function Hero() {
       {/* ============================================================
           HERO CONTENT
       ============================================================ */}
-
       <div className="relative z-10 mx-auto flex min-h-[calc(100vh-76px)] w-full max-w-[1500px] items-center px-6 pb-20 pt-20 sm:px-8 lg:px-12 xl:px-16">
         <div className="grid w-full items-center gap-16 lg:grid-cols-[0.9fr_1.1fr] lg:gap-12 xl:gap-16">
           {/* ========================================================
               LEFT — STORY
           ======================================================== */}
-
           <motion.div
             initial={{ opacity: 0, x: -36 }}
             animate={{ opacity: 1, x: 0 }}
@@ -230,36 +227,39 @@ export default function Hero() {
               transition={{ delay: 1, duration: 0.6 }}
               className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center"
             >
-              <motion.button
-                whileHover={{
-                  y: -2,
-                  scale: 1.015,
-                }}
-                whileTap={{ scale: 0.98 }}
-                className="group relative inline-flex h-12 items-center justify-center gap-3 overflow-hidden rounded-[10px] border border-violet-400/40 bg-violet-500 px-6 text-sm font-semibold text-white shadow-[0_0_36px_rgba(139,92,246,0.22)] transition-all duration-300 hover:border-violet-300 hover:bg-violet-500/90 hover:shadow-[0_0_55px_rgba(139,92,246,0.35)]"
-              >
-                <motion.span
-                  animate={{ x: ["-120%", "130%"] }}
-                  transition={{
-                    duration: 2.8,
-                    repeat: Infinity,
-                    ease: "linear",
+              <Link href="/scanner">
+                <motion.button
+                  whileHover={{
+                    y: -2,
+                    scale: 1.015,
                   }}
-                  className="absolute inset-y-0 w-20 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]"
-                />
+                  whileTap={{ scale: 0.98 }}
+                  className="group relative inline-flex h-12 items-center justify-center gap-3 overflow-hidden rounded-[10px] border border-violet-400/40 bg-violet-500 px-6 text-sm font-semibold text-white shadow-[0_0_36px_rgba(139,92,246,0.22)] transition-all duration-300 hover:border-violet-300 hover:bg-violet-500/90 hover:shadow-[0_0_55px_rgba(139,92,246,0.35)]"
+                >
+                  <motion.span
+                    animate={{ x: ["-120%", "130%"] }}
+                    transition={{
+                      duration: 2.8,
+                      repeat: Infinity,
+                      ease: "linear",
+                    }}
+                    className="absolute inset-y-0 w-20 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]"
+                  />
 
-                <span className="relative z-10">Start Investigation</span>
+                  <span className="relative z-10">Start Investigation</span>
+                  <ChevronRight className="relative z-10 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </motion.button>
+              </Link>
 
-                <ChevronRight className="relative z-10 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-              </motion.button>
-
-              <motion.button
-                whileHover={{ x: 3 }}
-                className="group inline-flex h-12 items-center gap-2 rounded-[10px] px-4 text-sm font-medium text-white/40 transition-colors duration-300 hover:text-white"
-              >
-                View live analysis
-                <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-              </motion.button>
+              <Link href="/scanner">
+                <motion.button
+                  whileHover={{ x: 3 }}
+                  className="group inline-flex h-12 items-center gap-2 rounded-[10px] px-4 text-sm font-medium text-white/40 transition-colors duration-300 hover:text-white"
+                >
+                  View live analysis
+                  <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                </motion.button>
+              </Link>
             </motion.div>
 
             {/* Capability rail */}
@@ -274,12 +274,10 @@ export default function Hero() {
                   icon={<Shield className="h-3.5 w-3.5" />}
                   label="Heuristic Analysis"
                 />
-
                 <Capability
                   icon={<Zap className="h-3.5 w-3.5" />}
                   label="Neural Reasoning"
                 />
-
                 <Capability
                   icon={<Lock className="h-3.5 w-3.5" />}
                   label="Encrypted Pipeline"
@@ -291,7 +289,6 @@ export default function Hero() {
           {/* ========================================================
               RIGHT — 3D THREAT ENVIRONMENT
           ======================================================== */}
-
           <motion.div
             initial={{ opacity: 0, x: 42, scale: 0.94 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
@@ -455,7 +452,6 @@ export default function Hero() {
                     className="absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full border border-violet-300/30 bg-violet-400/[0.06] shadow-[0_0_65px_rgba(139,92,246,0.22)]"
                   >
                     <div className="absolute inset-4 rounded-full border border-violet-300/20" />
-
                     <div className="absolute inset-8 rounded-full bg-violet-300 shadow-[0_0_30px_rgba(196,132,252,0.95),0_0_80px_rgba(139,92,246,0.45)]" />
                   </motion.div>
 
@@ -479,19 +475,16 @@ export default function Hero() {
                     delay={0}
                     label="SIGNAL"
                   />
-
                   <ThreatNode
                     className="right-[5%] top-[40%]"
                     delay={0.9}
                     label="ANALYSIS"
                   />
-
                   <ThreatNode
                     className="bottom-[20%] left-[24%]"
                     delay={1.8}
                     label="EVIDENCE"
                   />
-
                   <ThreatNode
                     className="bottom-[13%] right-[18%]"
                     delay={2.5}
@@ -516,7 +509,6 @@ export default function Hero() {
                   <div className="mb-3 flex items-center justify-between border-b border-white/[0.06] px-2 pb-3">
                     <div className="flex items-center gap-2">
                       <ScanLine className="h-3.5 w-3.5 text-violet-300" />
-
                       <span className="font-mono text-[8px] uppercase tracking-[0.2em] text-white/40">
                         LIVE THREAT ANALYSIS
                       </span>
@@ -524,7 +516,6 @@ export default function Hero() {
 
                     <div className="flex items-center gap-1.5">
                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
-
                       <span className="font-mono text-[7px] uppercase tracking-[0.16em] text-emerald-300/60">
                         STREAMING
                       </span>
@@ -545,7 +536,6 @@ export default function Hero() {
                   label="THREAT VECTOR"
                   value="ACTIVE"
                 />
-
                 <Telemetry
                   side="left"
                   top="68%"
@@ -561,7 +551,6 @@ export default function Hero() {
                   label="ENGINE"
                   value="READY"
                 />
-
                 <Telemetry
                   side="right"
                   top="73%"
@@ -577,7 +566,6 @@ export default function Hero() {
       {/* ============================================================
           BOTTOM SCROLL SIGNAL
       ============================================================ */}
-
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -598,7 +586,6 @@ export default function Hero() {
           <span className="font-mono text-[7px] tracking-[0.3em] text-white/25">
             SCROLL TO EXPLORE
           </span>
-
           <div className="h-8 w-px bg-gradient-to-b from-violet-400/50 to-transparent" />
         </motion.div>
       </motion.div>
@@ -687,12 +674,10 @@ function Telemetry({
           <span className="font-mono text-[6px] tracking-[0.2em] text-white/20">
             {label}
           </span>
-
           <span className="font-mono text-[7px] font-semibold tracking-[0.16em] text-violet-300/50">
             {value}
           </span>
         </div>
-
         <div className="h-px w-8 bg-gradient-to-r from-violet-400/30 to-transparent" />
       </div>
     </motion.div>
